@@ -1,9 +1,20 @@
 from flask import Flask, render_template, redirect, flash, request
-from services import JournalService
+from models import Journal
 
 
 app = Flask(__name__)
 app.secret_key = "my_not_so_safe_secret_key_since_this_is_development"
+
+
+@app.before_request
+def before_request():
+    Journal.connect()
+
+
+@app.after_request
+def after_request(response):
+    Journal.close()
+    return response
 
 
 @app.route('/', methods=['GET'])
@@ -13,45 +24,51 @@ def home():
 
 @app.route('/entries', methods=['GET'])
 def index():
-    return render_template('index.html')
-
-
-@app.route('/entries/<journal_id>/delete', methods=['DELETE', 'GET'])
-def delete_entry(journal_id):
-    print(f'Journal id {journal_id}')
-    JournalService.delete_record(journal_id)
-    return redirect('/entries')
+    journal_entries = Journal.get_all_records()
+    return render_template('index.html', articles=journal_entries)
 
 
 @app.route('/entries/new', methods=['POST'])
 def create():
     journal_entry = request.form.to_dict(flat=True)
-    entry_id, is_error = JournalService.create_record(journal_entry)
+    entry_id, is_error = Journal.create_record(journal_entry)
     if is_error:
         flash('Error occured while Creating entry', 'error');
         return redirect('/')
     return redirect(f'/entries/{entry_id}')
 
 
-@app.route('/entries/<journal_id>', methods=['GET'])
-def detail(journal_id):
-    journal, is_error = JournalService.get_record_by_id(journal_id)
+@app.route('/entries/<journal_id>/edit', methods=['GET'])
+def edit(journal_id):
+    journal, is_error = Journal.get_record_by_id(journal_id)
     if is_error:
         flash('Journal Not Found!', 'error')
         return redirect('/')
-    return render_template('detail.html')
+    return render_template('edit.html', journal_id=journal)
 
 
-@app.route('/edit', methods=['GET'])
-def edit():
-    return render_template('edit.html')
-
-
-@app.route('/new', methods=['GET'])
+@app.route('/entries/new', methods=['GET'])
 def new():
     return render_template('new.html')
 
 
+@app.route('/entries/<journal_id>', methods=['GET'])
+def detail(journal_id):
+    journal, is_error = Journal.get_record_by_id(journal_id)
+    if is_error:
+        flash('Journal Not Found!', 'error')
+        return redirect('/')
+    return render_template('detail.html', journal=journal)
+
+
+@app.route('/entries/<journal_id>/delete', methods=['DELETE', 'GET'])
+def delete_entry(journal_id):
+    print(f'Journal id {journal_id}')
+    Journal.delete_record(journal_id)
+    return redirect('/entries')
+
+
 if __name__ == '__main__':
-    JournalService.import_database_by_csv('storage/seed.csv')
+    Journal.initialize()
+    Journal.import_database_by_csv('storage/seed.csv')
     app.run(debug=True, port=5000, host="0.0.0.0")
