@@ -19,18 +19,15 @@ class JournalService(BaseService):
         except cls.model.DoesNotExist:
             return None, True
 
-    # TODO: Update this!
     @classmethod
     def create_record(cls, row):
         try:
-            cls.model.create(**row)
-        except IntegrityError as err:
-            query = cls.model.select().where(cls.model.product_name == row['product_name'])
-            if not len(query) == 1:
-                raise IntegrityError(err)
-            if row.get('date_updated', True):
-                row['date_updated'] = datetime.datetime.strftime(datetime.datetime.now(), '%m/%d/%Y')
-            cls.model.update(**row).where(cls.model.product_name == row['product_name']).execute()
+            record_id = cls.model.create(**row)
+            if not record_id:
+                return None, True
+            return record_id, False
+        except IntegrityError:
+            return None, True
 
     @classmethod
     def delete_record(cls, journal_id):

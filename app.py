@@ -25,7 +25,12 @@ def delete_entry(journal_id):
 
 @app.route('/entries/new', methods=['POST'])
 def create():
-    print(request.form)
+    journal_entry = request.form.to_dict(flat=True)
+    entry_id, is_error = JournalService.create_record(journal_entry)
+    if is_error:
+        flash('Error occured while Creating entry', 'error');
+        return redirect('/')
+    return redirect(f'/entries/{entry_id}')
 
 
 @app.route('/entries/<journal_id>', methods=['GET'])
