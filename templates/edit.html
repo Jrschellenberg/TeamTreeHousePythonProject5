@@ -4,18 +4,18 @@
     <div class="container">
         <div class="edit-entry">
             <h2>Edit Entry</h2>
-            <form action="{{ url_for('update', journal_id=journal.id ) }}" method="post">
+            <form action="{{ url_for('update', journal_id=entry.id ) }}" method="post">
                 <input type="hidden" name="_METHOD" value="PUT"/>
                 <label for="title"> Title</label>
-                <input id="title" type="text" name="title" value="{{ journal.title }}"><br>
+                <input id="title" type="text" name="title" value="{{ entry.title }}"><br>
                 <label for="date">Date</label>
-                <input id="date" type="date" name="date" value="{{ journal.date }}"><br>
+                <input id="date" type="date" name="date" value="{{ entry.date }}"><br>
                 <label for="time-spent"> Time Spent</label>
-                <input id="time-spent" type="text" name="time_spent" value="{{ journal.time_spent }}"><br>
+                <input id="time-spent" type="text" name="time_spent" value="{{ entry.time_spent }}"><br>
                 <label for="what-i-learned">What I Learned</label>
-                <textarea id="what-i-learned" rows="5" name="what_i_learned">{{ journal.what_i_learned }}</textarea>
+                <textarea id="what-i-learned" rows="5" name="what_i_learned">{{ entry.what_i_learned }}</textarea>
                 <label for="resources-to-remember">Resources to Remember</label>
-                <textarea id="resources-to-remember" rows="5" name="resources_to_remember">{{ journal.resources_to_remember }}</textarea>
+                <textarea id="resources-to-remember" rows="5" name="resources_to_remember">{{ entry.resources_to_remember }}</textarea>
                 <input type="submit" value="Publish Entry" class="button">
                 <a href="{{ url_for('index') }}" class="button button-secondary">Cancel</a>
             </form>

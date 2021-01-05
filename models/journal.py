@@ -8,11 +8,11 @@ db = SqliteDatabase('storage/data.db')
 
 class Journal(Model):
     id = IntegerField(primary_key=True, unique=True)
-    title = CharField(max_length=255)
+    title = CharField(max_length=255, null=False)
     time_spent = CharField(max_length=40)
     what_i_learned = CharField(max_length=1023)
     resources_to_remember = CharField(max_length=1023)
-    date = DateField(default=datetime.datetime.now, formats=['%m/%d/%Y'])
+    date = DateField(default=datetime.datetime.now, formats=['%m/%d/%Y'], null=False)
 
     class Meta:
         database = db

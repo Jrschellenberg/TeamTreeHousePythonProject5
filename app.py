@@ -1,3 +1,4 @@
+import copy
 from flask import Flask, render_template, redirect, flash, request, url_for
 from models import Journal
 from helpers.jinja import JinjaHelpers
@@ -26,12 +27,16 @@ def home():
 @app.route('/entries', methods=['GET'])
 def index():
     journal_entries = Journal.get_all_records()
-    return render_template('index.html', articles=journal_entries)
+    return render_template('index.html', entries=journal_entries)
 
 
 @app.route('/entries/new', methods=['POST'])
 def create():
     journal_entry = request.form.to_dict(flat=True)
+    journal_entry_copy = copy.deepcopy(journal_entry)
+    for key, val in journal_entry_copy.items():
+        if not bool(val):
+            journal_entry.pop(key, None)
     entry_id, is_error = Journal.create_record(journal_entry)
     if is_error:
         flash('Error occured while Creating entry', 'error')
@@ -45,7 +50,7 @@ def edit(journal_id):
     if is_error:
         flash('Journal Not Found!', 'error')
         return redirect('/')
-    return render_template('edit.html', journal=journal)
+    return render_template('edit.html', entry=journal)
 
 
 @app.route('/entries/<int:journal_id>/edit', methods=['POST'])
@@ -74,7 +79,7 @@ def details(journal_id):
     if is_error:
         flash('Journal Not Found!', 'error')
         return redirect('/')
-    return render_template('detail.html', journal=journal)
+    return render_template('detail.html', entry=journal)
 
 
 @app.route('/entries/<int:journal_id>/delete', methods=['DELETE'])
