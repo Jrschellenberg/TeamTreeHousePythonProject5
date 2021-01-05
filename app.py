@@ -82,11 +82,14 @@ def details(journal_id):
     return render_template('detail.html', entry=journal)
 
 
-@app.route('/entries/<int:journal_id>/delete', methods=['DELETE'])
+@app.route('/entries/<int:journal_id>/delete', methods=['POST'])
 def delete_entry(journal_id):
-    print(f'Journal id {journal_id}')
+    if not request.form['_METHOD'] == 'DELETE':
+        flash('ERROR 405 METHOD NOT ALLOWED', 'error')
+        return redirect(url_for('index'))
     Journal.delete_record(journal_id)
-    return redirect('/entries')
+    flash(f'Successfully deleted {journal_id}', 'success')
+    return redirect(url_for('index'))
 
 
 if __name__ == '__main__':

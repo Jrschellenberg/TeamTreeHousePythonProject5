@@ -13,22 +13,20 @@
                 </div>
                 <div class="entry">
                     <h3>What I Learned:</h3>
-                    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc ut rhoncus felis, vel tincidunt neque.</p>
-                    <p>Cras egestas ac ipsum in posuere. Fusce suscipit, libero id malesuada placerat, orci velit semper metus, quis pulvinar sem nunc vel augue. In ornare tempor metus, sit amet congue justo porta et. Etiam pretium, sapien non fermentum consequat, <a href="">dolor augue</a> gravida lacus, non accumsan. Vestibulum ut metus eleifend, malesuada nisl at, scelerisque sapien.</p>
+                    {{ entry.what_i_learned }}
                 </div>
                 <div class="entry">
                     <h3>Resources to Remember:</h3>
-                    <ul>
-                        <li><a href="">Lorem ipsum dolor sit amet</a></li>
-                        <li><a href="">Cras accumsan cursus ante, non dapibus tempor</a></li>
-                        <li>Nunc ut rhoncus felis, vel tincidunt neque</li>
-                        <li><a href="">Ipsum dolor sit amet</a></li>
-                    </ul>
+                    {{ entry.resources_to_remember }}
                 </div>
             </article>
         </div>
     </div>
     <div class="edit">
         <p><a href="{{ url_for('edit', journal_id=entry.id) }}">Edit Entry</a></p>
+        <form action="{{ url_for('delete_entry', journal_id=entry.id) }}" method="post">
+            <input type="hidden" name="_METHOD" value="DELETE"/>
+            <input type="submit" value="Delete Entry" class="button" />
+        </form>
     </div>
 {% endblock %}
