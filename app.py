@@ -41,7 +41,7 @@ def create():
     if is_error:
         flash('Error occured while Creating entry', 'error')
         return redirect(url_for('index'))
-    return redirect(url_for('details', journal_id=entry_id))
+    return redirect(url_for('details', journal_id=str(entry_id)))
 
 
 @app.route('/entries/<int:journal_id>/edit', methods=['GET'])
