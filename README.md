@@ -11,11 +11,13 @@ $ python --version
 
 - `python3 -m venv p5`
 - `source p5/bin/activate`
+- `pip install -r requirements.txt`
 - `python app.py`
 
 
 ## Getting Started (Windows)
 - `python3 -m venv p5`
 - `p5\Scripts\activate`
+- `pip install -r requirements.txt`
 - `python app.py`
 
