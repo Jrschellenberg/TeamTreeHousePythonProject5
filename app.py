@@ -1,7 +1,7 @@
 import copy
 from flask import Flask, render_template, redirect, flash, request, url_for
+from helpers import JinjaHelpers
 from models import Journal
-from helpers.jinja import JinjaHelpers
 
 
 app = Flask(__name__)
