@@ -46,16 +46,12 @@ class Journal(Model):
             return None, True
 
     @classmethod
-    def update_record(cls, id, row):
+    def update_record(cls, row_id, row):
         try:
-            record_id = cls.update(**row).where(cls.id == id).execute()
-            print(f"Record ID IS {record_id}")
-            if not record_id:
-                return None, True
-            return record_id, False
+            cls.update(**row).where(cls.id == row_id).execute()
+            return None, False
         except IntegrityError as e:
-            print(f"we hit here?!?! {e}")
-            return None, True
+            return e, True
 
     @classmethod
     def create_record(cls, row):

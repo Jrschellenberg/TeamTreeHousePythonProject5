@@ -55,11 +55,11 @@ def update(journal_id):
         return redirect(url_for('index'))
     updated_journal_entry = request.form.to_dict(flat=True)
     updated_journal_entry.pop('_METHOD', None)
-    journal, is_error = Journal.update_record(journal_id, updated_journal_entry)
+    err_msg, is_error = Journal.update_record(journal_id, updated_journal_entry)
     if is_error:
-        flash('Journal Not Found!', 'error')
+        flash(f'Could not Update! {err_msg}', 'error')
     else:
-        flash(f'Successfully Updated Journal {journal}', 'success')
+        flash(f'Successfully Updated Journal {journal_id}', 'success')
     return redirect('/')
 
 
