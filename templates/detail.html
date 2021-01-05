@@ -9,15 +9,19 @@
                 <time datetime="{{ entry.date }}">{{ entry.date|date_format('%B %d, %Y') }}</time>
                 <div class="entry">
                     <h3>Time Spent: </h3>
-                    <p>{{ entry.time_spent }}</p>
+                    <p>{{ entry.time_spent|format_minutes }}</p>
                 </div>
                 <div class="entry">
                     <h3>What I Learned:</h3>
-                    {{ entry.what_i_learned }}
+                    <div>
+                        {{ entry.what_i_learned }}
+                    </div>
                 </div>
                 <div class="entry">
                     <h3>Resources to Remember:</h3>
-                    {{ entry.resources_to_remember }}
+                    <div>
+                        {{ entry.resources_to_remember }}
+                    </div>
                 </div>
             </article>
         </div>
