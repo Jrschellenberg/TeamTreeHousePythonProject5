@@ -1,4 +1,4 @@
-from flask import Flask, render_template, redirect, flash, request
+from flask import Flask, render_template, redirect, flash, request, url_for
 from models import Journal
 from helpers.jinja import JinjaHelpers
 
@@ -48,14 +48,18 @@ def edit(journal_id):
     return render_template('edit.html', journal=journal)
 
 
-@app.route('/entries/<int:journal_id>/edit', methods=['PUT', 'POST'])
+@app.route('/entries/<int:journal_id>/edit', methods=['POST'])
 def update(journal_id):
+    if not request.form['_METHOD'] == 'PUT':
+        flash('ERROR 405 METHOD NOT ALLOWED', 'error')
+        return redirect(url_for('index'))
     updated_journal_entry = request.form.to_dict(flat=True)
-    journal, is_error = Journal.get_record_by_id(journal_id)
+    updated_journal_entry.pop('_METHOD', None)
+    journal, is_error = Journal.update_record(journal_id, updated_journal_entry)
     if is_error:
         flash('Journal Not Found!', 'error')
     else:
-        flash(f'Successfully Updated Journal {journal_id}', 'success')
+        flash(f'Successfully Updated Journal {journal}', 'success')
     return redirect('/')
 
 

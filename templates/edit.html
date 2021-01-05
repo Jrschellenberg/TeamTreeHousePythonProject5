@@ -5,6 +5,7 @@
         <div class="edit-entry">
             <h2>Edit Entry</h2>
             <form action="{{ url_for('update', journal_id=journal.id ) }}" method="post">
+                <input type="hidden" name="_METHOD" value="PUT"/>
                 <label for="title"> Title</label>
                 <input id="title" type="text" name="title" value="{{ journal.title }}"><br>
                 <label for="date">Date</label>

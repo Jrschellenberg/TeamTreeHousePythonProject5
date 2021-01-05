@@ -8,7 +8,7 @@ db = SqliteDatabase('storage/data.db')
 
 class Journal(Model):
     id = IntegerField(primary_key=True, unique=True)
-    title = CharField(max_length=255, unique=True)
+    title = CharField(max_length=255)
     time_spent = CharField(max_length=40)
     what_i_learned = CharField(max_length=1023)
     resources_to_remember = CharField(max_length=1023)
@@ -43,6 +43,18 @@ class Journal(Model):
         try:
             return cls.select().where(cls.id == journal_id).dicts().get(), False
         except cls.DoesNotExist:
+            return None, True
+
+    @classmethod
+    def update_record(cls, id, row):
+        try:
+            record_id = cls.update(**row).where(cls.id == id).execute()
+            print(f"Record ID IS {record_id}")
+            if not record_id:
+                return None, True
+            return record_id, False
+        except IntegrityError as e:
+            print(f"we hit here?!?! {e}")
             return None, True
 
     @classmethod
