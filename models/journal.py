@@ -12,7 +12,8 @@ class Journal(Model):
     time_spent = IntegerField()
     what_i_learned = CharField(max_length=1023)
     resources_to_remember = CharField(max_length=1023)
-    date = DateField(default=datetime.datetime.now, formats=['%m/%d/%Y'], null=False)
+    date = DateField(default=datetime.datetime.now,
+                     formats=['%m/%d/%Y'], null=False)
 
     class Meta:
         database = db
@@ -41,7 +42,8 @@ class Journal(Model):
     @classmethod
     def get_record_by_id(cls, journal_id):
         try:
-            return cls.select().where(cls.id == journal_id).dicts().get(), False
+            return cls.select()\
+                       .where(cls.id == journal_id).dicts().get(), False
         except cls.DoesNotExist:
             return None, True
 
@@ -75,7 +77,8 @@ class Journal(Model):
     @classmethod
     def import_database_by_csv(cls, filepath):
         if not len(cls.select()) == 0:
-            print("Database already contains data, Skipping csv initialization...")
+            print("Database already contains data,"
+                  " Skipping csv initialization...")
             return
 
         print(f"Database Does not Exist, Seeding Database with {filepath}...")

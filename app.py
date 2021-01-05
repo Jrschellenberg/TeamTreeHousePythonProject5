@@ -40,8 +40,8 @@ def create():
     entry_id, is_error = Journal.create_record(journal_entry)
     if is_error:
         flash('Error occured while Creating entry', 'error')
-        return redirect('/')
-    return redirect(f'/entries/{entry_id}')
+        return redirect(url_for('index'))
+    return redirect(url_for('details', journal_id=entry_id))
 
 
 @app.route('/entries/<int:journal_id>/edit', methods=['GET'])
@@ -49,7 +49,7 @@ def edit(journal_id):
     journal, is_error = Journal.get_record_by_id(journal_id)
     if is_error:
         flash('Journal Not Found!', 'error')
-        return redirect('/')
+        return redirect(url_for('index'))
     return render_template('edit.html', entry=journal)
 
 
@@ -60,12 +60,13 @@ def update(journal_id):
         return redirect(url_for('index'))
     updated_journal_entry = request.form.to_dict(flat=True)
     updated_journal_entry.pop('_METHOD', None)
-    err_msg, is_error = Journal.update_record(journal_id, updated_journal_entry)
+    err_msg, is_error = \
+        Journal.update_record(journal_id, updated_journal_entry)
     if is_error:
         flash(f'Could not Update! {err_msg}', 'error')
     else:
         flash(f'Successfully Updated Journal {journal_id}', 'success')
-    return redirect('/')
+    return redirect(url_for('index'))
 
 
 @app.route('/entries/new', methods=['GET'])
@@ -78,7 +79,7 @@ def details(journal_id):
     journal, is_error = Journal.get_record_by_id(journal_id)
     if is_error:
         flash('Journal Not Found!', 'error')
-        return redirect('/')
+        return redirect(url_for('index'))
     return render_template('detail.html', entry=journal)
 
 
