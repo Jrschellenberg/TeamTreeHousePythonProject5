@@ -1,5 +1,6 @@
 from flask import Flask, render_template, redirect, flash, request
 from models import Journal
+from helpers.jinja import JinjaHelpers
 
 
 app = Flask(__name__)
@@ -33,18 +34,29 @@ def create():
     journal_entry = request.form.to_dict(flat=True)
     entry_id, is_error = Journal.create_record(journal_entry)
     if is_error:
-        flash('Error occured while Creating entry', 'error');
+        flash('Error occured while Creating entry', 'error')
         return redirect('/')
     return redirect(f'/entries/{entry_id}')
 
 
-@app.route('/entries/<journal_id>/edit', methods=['GET'])
+@app.route('/entries/<int:journal_id>/edit', methods=['GET'])
 def edit(journal_id):
     journal, is_error = Journal.get_record_by_id(journal_id)
     if is_error:
         flash('Journal Not Found!', 'error')
         return redirect('/')
-    return render_template('edit.html', journal_id=journal)
+    return render_template('edit.html', journal=journal)
+
+
+@app.route('/entries/<int:journal_id>/edit', methods=['PUT', 'POST'])
+def update(journal_id):
+    updated_journal_entry = request.form.to_dict(flat=True)
+    journal, is_error = Journal.get_record_by_id(journal_id)
+    if is_error:
+        flash('Journal Not Found!', 'error')
+    else:
+        flash(f'Successfully Updated Journal {journal_id}', 'success')
+    return redirect('/')
 
 
 @app.route('/entries/new', methods=['GET'])
@@ -52,8 +64,8 @@ def new():
     return render_template('new.html')
 
 
-@app.route('/entries/<journal_id>', methods=['GET'])
-def detail(journal_id):
+@app.route('/entries/<int:journal_id>', methods=['GET'])
+def details(journal_id):
     journal, is_error = Journal.get_record_by_id(journal_id)
     if is_error:
         flash('Journal Not Found!', 'error')
@@ -61,7 +73,7 @@ def detail(journal_id):
     return render_template('detail.html', journal=journal)
 
 
-@app.route('/entries/<journal_id>/delete', methods=['DELETE', 'GET'])
+@app.route('/entries/<int:journal_id>/delete', methods=['DELETE'])
 def delete_entry(journal_id):
     print(f'Journal id {journal_id}')
     Journal.delete_record(journal_id)
@@ -69,6 +81,8 @@ def delete_entry(journal_id):
 
 
 if __name__ == '__main__':
+    helpers = JinjaHelpers(app)
+    helpers.register()
     Journal.initialize()
     Journal.import_database_by_csv('storage/seed.csv')
     app.run(debug=True, port=5000, host="0.0.0.0")

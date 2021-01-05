@@ -29,6 +29,6 @@
         </div>
     </div>
     <div class="edit">
-        <p><a href="{{ url_for('edit') }}">Edit Entry</a></p>
+        <p><a href="{{ url_for('edit', journal_id=journal.id) }}">Edit Entry</a></p>
     </div>
 {% endblock %}
